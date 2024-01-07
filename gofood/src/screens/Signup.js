@@ -25,6 +25,12 @@ export default function Signup() {
    
 
     const json = await response.json();
+    setcredentials({
+      name: "",
+      email: "",
+      password: "",
+      geolocation: "",
+    })
     console.log(json);
     if (!json.success) {
       alert("Enter valid credentials");
@@ -33,6 +39,7 @@ export default function Signup() {
 
   const onChange = (event) => {
     setcredentials({ ...credentials, [event.target.name]: event.target.value });
+  
   };
 
   return (
@@ -90,7 +97,7 @@ export default function Signup() {
               type="text"
               className="form-control"
               name="geolocation"
-              value={credentials.location}
+              value={credentials.geolocation}
               onChange={onChange}
               id="exampleInputPassword1"
             />
