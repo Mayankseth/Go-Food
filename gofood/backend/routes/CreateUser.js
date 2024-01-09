@@ -4,7 +4,7 @@ const User = require("../model/User");
 const { body, validationResult } = require("express-validator");
 
 const jwt = require("jsonwebtoken")
-
+const jwtSecret="asdfghjkl"
 const bcrypt =require("bcryptjs")
 
 router.post(
@@ -53,19 +53,30 @@ router.post(
     try {
         // console.log(email,req.body.password)
       let userData = await User.findOne({ email });
-      console.log(typeof(req.body.password) ,typeof(userData.password))
+      // console.log(req.body.password ,userData.password)
       if (!userData) {
         return res
           .status(400)
           .json({ errors: "Try logging with correct credentials" });
       }
-      if (req.body.password !== userData.password) {
+      const pwdCompare=await bcrypt.compare(req.body.password,userData.password)
+      // console.log(pwdCompare)
+
+
+      if (!pwdCompare) {
         return res
           .status(400)
           .json({ errors: "Try logging with correct credentials" });
-      } else {
-        res.json({ success: true });
+      } 
+      const data={
+        user:{
+          id:userData.id
+        }
       }
+      const authToken=jwt.sign(data,jwtSecret)
+
+       return res.json({ success: true,authToken:authToken })
+      
     } catch (error) {
       console.log(error);
       res.json({ success: false });
